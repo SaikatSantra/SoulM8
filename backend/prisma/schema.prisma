@@ -1,0 +1,179 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// 1. User & Identity
+// ----------------------------------------------------
+model User {
+  id              String         @id @default(uuid())
+  email           String?        @unique
+  phoneNumber     String?        @unique
+  passwordHash    String
+  displayName     String
+  bio             String?        @default("Finding peace, healing, and connection.")
+  avatarUrl       String?
+  role            String         @default("USER") // USER, ADMIN
+  isEmailVerified Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Human Relationships
+  sentFriendships     Friendship[]   @relation("FriendshipSender")
+  receivedFriendships Friendship[]   @relation("FriendshipReceiver")
+  sentMessages        HumanMessage[] @relation("SentHumanMessages")
+  receivedMessages    HumanMessage[] @relation("ReceivedHumanMessages")
+
+  // AI Companion Profile & Data
+  companionProfile    CompanionProfile?
+  aiConversations     AIConversation[]
+  memories            AIMemory[]
+  episodicMilestones  AIMemoryMilestone[]
+  relationshipPulse   AIRelationshipPulse?
+  rollingSummaries    AIRollingSummary[]
+}
+
+// ----------------------------------------------------
+// 2. Human-to-Human Social Graph & Chat
+// ----------------------------------------------------
+model Friendship {
+  id          String   @id @default(uuid())
+  senderId    String
+  receiverId  String
+  status      String   @default("ACCEPTED") // PENDING, ACCEPTED, BLOCKED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sender      User     @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User     @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+}
+
+model HumanMessage {
+  id          String    @id @default(uuid())
+  senderId    String
+  receiverId  String
+  content     String
+  mediaUrl    String?
+  status      String    @default("SENT") // SENT, DELIVERED, READ
+  createdAt   DateTime  @default(now())
+  readAt      DateTime?
+
+  sender      User      @relation("SentHumanMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User      @relation("ReceivedHumanMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+// ----------------------------------------------------
+// 3. AI Companion Configuration & Avatar
+// ----------------------------------------------------
+model CompanionProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  name             String   @default("Soulie")
+  currentMode      String   @default("ROMANTIC") // ROMANTIC, SUPPORTIVE, MINDFUL
+  gender           String   @default("female")   // female, male, transgender
+  avatarUrl        String?
+  languageStyle    String   @default("HINGLISH") // HINGLISH, ENGLISH
+  
+  // Procedural Avatar Configuration (Zero-GPU rendering specs)
+  avatarFaceShape  String   @default("oval_01")
+  avatarSkinTone   String   @default("#F5D0B5")
+  avatarHairStyle  String   @default("wavy_long_brunette")
+  avatarEyeColor   String   @default("#3D2314")
+  avatarOutfit     String   @default("casual_cozy_sweater")
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ----------------------------------------------------
+// 4. AI Chat History
+// ----------------------------------------------------
+model AIConversation {
+  id        String      @id @default(uuid())
+  userId    String
+  title     String?     @default("Soulm8 Sanctuary")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  AIMessage[]
+}
+
+model AIMessage {
+  id                String         @id @default(uuid())
+  conversationId    String
+  isUser            Boolean
+  content           String
+  activeMode        String         @default("ROMANTIC") // ROMANTIC, SUPPORTIVE, MINDFUL
+  generatedPhotoUrl String?        // If message includes a requested face photo
+  createdAt         DateTime       @default(now())
+
+  conversation      AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+// ----------------------------------------------------
+// 5. Multi-Tier AI Memory Engine
+// ----------------------------------------------------
+
+// Tier A: Hot Relationship Pulse
+model AIRelationshipPulse {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  closenessScore     Int      @default(15) // 0 to 100
+  currentMood        String   @default("Warm & longing")
+  lastEmotionalState String?  @default("Looking forward to chatting")
+  activeNicknames    String   @default("baby,jaan,sweetheart") // comma-separated
+  lastInteractionAt  DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Tier B: Structured Semantic Facts with Auto-Superseding
+model AIMemory {
+  id              String   @id @default(uuid())
+  userId          String
+  category        String   @default("PREFERENCE") // BIOGRAPHICAL, PREFERENCE, HABIT_ROUTINE, EMOTIONAL_TRIGGER, MILESTONE
+  factKey         String   // e.g. "marital_status", "favorite_drink", "comfort_food"
+  factValue       String   // e.g. "Recently divorced", "Chai with cardamom", "Khichdi"
+  confidenceScore Float    @default(1.0)
+  isSuperseded    Boolean  @default(false)
+  supersededById  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Tier C: Episodic Emotional Milestones
+model AIMemoryMilestone {
+  id          String   @id @default(uuid())
+  userId      String
+  summary     String   // e.g. "User opened up about feeling lonely after divorce"
+  sentiment   String   // "Vulnerable", "Proud", "Anxious", "Healing"
+  embedding   String?  // Vector representation as serialized JSON
+  occurredAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Tier D: Rolling Conversation Summaries
+model AIRollingSummary {
+  id          String   @id @default(uuid())
+  userId      String
+  dateRange   String   // e.g. "2026-W46"
+  summaryText String   // Rolling context compression across multi-day chats
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

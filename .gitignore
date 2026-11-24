@@ -1,0 +1,23 @@
+# Node & Backend
+**/node_modules/
+backend/dist/
+backend/.env
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Flutter & Mobile
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

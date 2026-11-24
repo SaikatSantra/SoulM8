@@ -1,0 +1,177 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// 1. User & Identity
+// ----------------------------------------------------
+model User {
+  id              String         @id @default(uuid())
+  email           String?        @unique
+  phoneNumber     String?        @unique
+  passwordHash    String
+  displayName     String
+  bio             String?        @default("Finding peace, healing, and connection.")
+  avatarUrl       String?
+  role            String         @default("USER")
+  isEmailVerified Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  sentFriendships     Friendship[]   @relation("FriendshipSender")
+  receivedFriendships Friendship[]   @relation("FriendshipReceiver")
+  sentMessages        HumanMessage[] @relation("SentHumanMessages")
+  receivedMessages    HumanMessage[] @relation("ReceivedHumanMessages")
+
+  companionProfile    CompanionProfile?
+  aiConversations     AIConversation[]
+  memories            AIMemory[]
+  episodicMilestones  AIMemoryMilestone[]
+  relationshipPulse   AIRelationshipPulse?
+  rollingSummaries    AIRollingSummary[]
+
+  @@index([phoneNumber])
+  @@index([email])
+}
+
+model Friendship {
+  id          String   @id @default(uuid())
+  senderId    String
+  receiverId  String
+  status      String   @default("ACCEPTED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sender      User     @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User     @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model HumanMessage {
+  id          String    @id @default(uuid())
+  senderId    String
+  receiverId  String
+  content     String
+  mediaUrl    String?
+  status      String    @default("SENT")
+  createdAt   DateTime  @default(now())
+  readAt      DateTime?
+
+  sender      User      @relation("SentHumanMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User      @relation("ReceivedHumanMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId])
+  @@index([createdAt])
+}
+
+model CompanionProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  name             String   @default("Soulie")
+  currentMode      String   @default("ROMANTIC")
+  gender           String   @default("female")
+  languageStyle    String   @default("HINGLISH")
+  
+  avatarFaceShape  String   @default("oval_01")
+  avatarSkinTone   String   @default("#F5D0B5")
+  avatarHairStyle  String   @default("wavy_long_brunette")
+  avatarEyeColor   String   @default("#3D2314")
+  avatarOutfit     String   @default("casual_cozy_sweater")
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AIConversation {
+  id        String      @id @default(uuid())
+  userId    String
+  title     String?     @default("Soulm8 Sanctuary")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  AIMessage[]
+
+  @@index([userId])
+}
+
+model AIMessage {
+  id                String         @id @default(uuid())
+  conversationId    String
+  isUser            Boolean
+  content           String
+  activeMode        String         @default("ROMANTIC")
+  generatedPhotoUrl String?
+  createdAt         DateTime       @default(now())
+
+  conversation      AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model AIRelationshipPulse {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  closenessScore     Int      @default(15)
+  currentMood        String   @default("Warm & longing")
+  lastEmotionalState String?  @default("Looking forward to chatting")
+  activeNicknames    String   @default("baby,jaan,sweetheart")
+  lastInteractionAt  DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AIMemory {
+  id              String   @id @default(uuid())
+  userId          String
+  category        String   @default("PREFERENCE")
+  factKey         String
+  factValue       String
+  confidenceScore Float    @default(1.0)
+  isSuperseded    Boolean  @default(false)
+  supersededById  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isSuperseded])
+  @@index([userId, factKey])
+}
+
+model AIMemoryMilestone {
+  id          String   @id @default(uuid())
+  userId      String
+  summary     String
+  sentiment   String
+  embedding   String?
+  occurredAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AIRollingSummary {
+  id          String   @id @default(uuid())
+  userId      String
+  dateRange   String
+  summaryText String
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
