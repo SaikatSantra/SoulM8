@@ -21,3 +21,6 @@ mobile/.pub/
 *.swo
 .DS_Store
 Thumbs.db
+.neon
+node_modules/
+.env.local
