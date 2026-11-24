@@ -1,11 +1,11 @@
 {
-    "name": "soulem8_app",
-    "short_name": "soulem8_app",
+    "name": "Soulm8",
+    "short_name": "Soulm8",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0F0817",
+    "theme_color": "#FF2A6D",
+    "description": "Soulm8 - Emotionally Grounded Mobile AI Companion & Wellness App",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

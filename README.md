@@ -1,4 +1,4 @@
-# 💖 Soulm8 (Soulem8)
+# 💖 Soulm8
 
 > **A private, emotionally grounded mobile AI companion and wellness app designed for single, divorced, or lonely individuals.**  
 > Blending deep emotional wellness, playful romantic companionship, human-to-human connection, and interactive visual avatar personalization.
