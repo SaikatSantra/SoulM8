@@ -32,10 +32,21 @@ jobs:
           cd mobile
           flutter pub get
 
+      - name: Generate Release Signing Keystore
+        run: |
+          keytool -genkeypair -v -keystore mobile/android/app/upload-keystore.jks \
+            -alias soulm8 -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass soulm8password -keypass soulm8password \
+            -dname "CN=Soulm8, OU=Mobile, O=Soulm8, L=Kolkata, ST=WB, C=IN"
+
       - name: Build Android Release APK
         run: |
           cd mobile
           flutter build apk --release --dart-define=BACKEND_HOST=soulm8-iota.vercel.app
+
+      - name: Verify APK Signature
+        run: |
+          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose mobile/build/app/outputs/flutter-apk/app-release.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -48,7 +59,8 @@ jobs:
         with:
           tag_name: v1.0.0
           name: "Soulm8 Android Release v1.0.0"
-          body: "Official Soulm8 Android APK install file. Direct download for Android phones."
+          body: "Official signed Soulm8 Android APK install file. Direct download for Android phones."
           files: mobile/build/app/outputs/flutter-apk/app-release.apk
+          overwrite: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
