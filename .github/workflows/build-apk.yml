@@ -1,9 +1,12 @@
-name: Build Soulm8 Android APK
+name: Build & Release Soulm8 Android APK
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-apk:
@@ -39,3 +42,13 @@ jobs:
         with:
           name: soulm8-release-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publish Direct Public Download Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: "Soulm8 Android Release v1.0.0"
+          body: "Official Soulm8 Android APK install file. Direct download for Android phones."
+          files: mobile/build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
