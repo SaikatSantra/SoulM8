@@ -1,4 +1,4 @@
-package com.soulem8.soulem8_app
+package com.soulm8.soulm8_app
 
 import io.flutter.embedding.android.FlutterActivity
 
