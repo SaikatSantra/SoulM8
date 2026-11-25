@@ -55,7 +55,7 @@ class ModeSelectorDialog extends StatelessWidget {
               key: 'ROMANTIC',
               emoji: '🌹',
               title: 'Romantic Partner (GF/BF Mode)',
-              desc: 'Natural Hinglish/English playful banter ("baby", "jaan", "shaitan"), sweet teasing, and warm emotional intimacy.',
+              desc: 'Natural Hinglish/English playful banter ("baby", "sweetheart", "shaitan"), sweet teasing, and warm emotional intimacy.',
               color: Soulm8Theme.romanticColor,
             ),
             const SizedBox(height: 12),

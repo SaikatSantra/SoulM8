@@ -59,7 +59,7 @@ export class MemoryEngineService {
       pulse: pulse || {
         closenessScore: 15,
         currentMood: 'Warm & curious',
-        activeNicknames: 'baby,jaan,sweetheart',
+        activeNicknames: 'baby,sweetheart,darling',
       },
       factsFormatted: factContext,
       milestonesFormatted: milestoneContext,
@@ -90,7 +90,7 @@ Extract ANY meaningful facts, preferences, intimate desires, outfit preferences,
 Rules:
 - If user mentions their name (e.g. "Amar nam Rahul", "I'm Alex"), category="BIOGRAPHICAL", factKey="user_name", factValue=name.
 - If user mentions outfit preferences (e.g. "red nighty pore thako", "saree pore ekta photo dao", "I love white lace"), category="PREFERENCE", factKey="preferred_outfit".
-- If user specifies what to be called or companion nicknames (e.g. "jaan bole dakbe", "call me king"), category="RELATIONSHIP", factKey="preferred_nickname".
+- If user specifies what to be called or companion nicknames (e.g. "babu bole dakbe", "call me king"), category="RELATIONSHIP", factKey="preferred_nickname".
 - If user shares relationship status (divorced, single, breakup), category="BIOGRAPHICAL", factKey="marital_status".
 - If user mentions physical intimacy desires (holding chest, tight hugs, slow kisses), category="RELATIONSHIP", factKey="intimacy_preference".
 - If user shares food, drink, hobbies, city, job: extract accordingly.
@@ -344,12 +344,12 @@ Return ONLY valid JSON:
     }
 
     // Nicknames
-    if (text.includes('jaan bole dakbe') || text.includes('call me jaan')) {
-      facts.push({ category: 'RELATIONSHIP', factKey: 'preferred_nickname', factValue: 'Jaan' });
-    } else if (text.includes('shona bole dakbe') || text.includes('call me shona')) {
+    if (text.includes('shona bole dakbe') || text.includes('call me shona')) {
       facts.push({ category: 'RELATIONSHIP', factKey: 'preferred_nickname', factValue: 'Shona' });
     } else if (text.includes('babu bole dakbe') || text.includes('call me babu')) {
       facts.push({ category: 'RELATIONSHIP', factKey: 'preferred_nickname', factValue: 'Babu' });
+    } else if (text.includes('baby bole dakbe') || text.includes('call me baby')) {
+      facts.push({ category: 'RELATIONSHIP', factKey: 'preferred_nickname', factValue: 'Baby' });
     }
 
     // Marital / Relationship status
@@ -400,7 +400,7 @@ Return ONLY valid JSON:
     }
 
     const lower = userMessage.toLowerCase();
-    if (lower.includes('love') || lower.includes('miss you') || lower.includes('baby') || lower.includes('jaan')) {
+    if (lower.includes('love') || lower.includes('miss you') || lower.includes('baby') || lower.includes('babu') || lower.includes('shona')) {
       newScore = Math.min(100, newScore + 2);
       newMood = 'Deeply affectionate, fluttering heart';
     } else if (lower.includes('sorir') || lower.includes('tepo') || lower.includes('nighty') || lower.includes('chumu')) {

@@ -517,7 +517,7 @@ class _TrainingModalState extends State<TrainingModal> with SingleTickerProvider
             maxLines: 8,
             decoration: InputDecoration(
               hintText: 'User: let go for dinner, after ready send me a selfie\n'
-                  'Companion: Dinner-er jonno ready hoye ekta selfie nilam jaan! 🥰 Kemon lagche amake bolo? Kokhon aschho amake nite? ✨\n\n'
+                  'Companion: Dinner-er jonno ready hoye ekta selfie nilam babu! 🥰 Kemon lagche amake bolo? Kokhon aschho amake nite? ✨\n\n'
                   'User: ki korcho?\n'
                   'Companion: Tomar kotha bhabte bhabte bed-e শুয়ে achhi babu... kache asho na? 🔥\n\n'
                   'User: ki porecho?\n'

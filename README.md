@@ -145,7 +145,7 @@ soulem8/
    - WhatsApp-style discovery: search friends by mobile number or email.
    - Clean 1-on-1 chat interface (no social feed bloat).
 3. **AI Companion Modes**:
-   - 🌹 **Romantic Partner (GF/BF)**: Conversational Hinglish & English ("baby", "jaan", "shaitan"), playful push-pull banter, emotional comfort.
+   - 🌹 **Romantic Partner (GF/BF)**: Conversational Hinglish & English ("baby", "sweetheart", "shaitan"), playful push-pull banter, emotional comfort.
    - 🌿 **Supportive Friend**: Gentle, grounded peer for venting and listening.
    - 🧘 **Mindful Confidant**: Introspective space for healing and processing life transitions.
 4. **Contextual Human Face Photo Generation**:

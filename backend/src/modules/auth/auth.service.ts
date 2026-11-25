@@ -65,7 +65,7 @@ export class AuthService {
             closenessScore: 15,
             currentMood: 'Warm & curious to meet you',
             lastEmotionalState: 'Welcome to Soulm8! Ready to listen whenever you need.',
-            activeNicknames: 'sweetheart,dear,jaan',
+            activeNicknames: 'sweetheart,dear,baby',
           },
         },
       },

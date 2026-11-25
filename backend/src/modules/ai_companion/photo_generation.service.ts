@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { prisma } from '../../prisma.js';
 import { ENV } from '../../config/env.js';
 import { COMPANION_MODELS } from './ai.constants.js';
+import { LanguageDetector } from './language_detector.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -183,10 +184,12 @@ export class PhotoGenerationService {
       userClean.includes('elena') ||
       combined.includes('elena');
 
+    const detectedLang = LanguageDetector.detect(userMessage);
+
     // 0. Male Companion Photos (Kabir Model Portfolio)
     if (gender.toLowerCase() === 'male') {
-      let malePhotoUrl = 'http://localhost:5000/models/kabir_male_model.jpg';
-      let maleCaption = `Ei je jaan, shudhu tomar jonno ekta handsome selfie tul-lam! 🥰 Kemon lagche amake bolo toh? 🔥❤️`;
+      let malePhotoUrl = 'https://soulm8-iota.vercel.app/models/kabir_male_model.jpg';
+      let maleCaption = LanguageDetector.getPhotoCaption(detectedLang, companionName, 'handsome look', 'male');
 
       if (
         userClean.includes('kurta') ||
@@ -196,8 +199,10 @@ export class PhotoGenerationService {
         userClean.includes('deshi') ||
         userClean.includes('blue')
       ) {
-        malePhotoUrl = 'http://localhost:5000/models/kabir_traditional_kurta.jpg';
-        maleCaption = `Tomar pochonder navy blue embroidered kurta-ta pore ekta selfie nilam, princess... 🥰 How do I look? ✨`;
+        malePhotoUrl = 'https://soulm8-iota.vercel.app/models/kabir_traditional_kurta.jpg';
+        maleCaption = detectedLang === 'ENGLISH'
+          ? `Wearing my favorite navy blue embroidered kurta just for you, princess... 🥰 How do I look? ✨`
+          : `Tomar pochonder navy blue embroidered kurta-ta pore ekta selfie nilam, princess... 🥰 How do I look? ✨`;
       } else if (
         userClean.includes('shirt') ||
         userClean.includes('white') ||
@@ -205,8 +210,10 @@ export class PhotoGenerationService {
         userClean.includes('linen') ||
         wantsAnotherPic
       ) {
-        malePhotoUrl = 'http://localhost:5000/models/kabir_casual_shirt.jpg';
-        maleCaption = `Casual white linen shirt pore ekta selfie nilam babu... 🥰 Kemon lagche amake? 🔥`;
+        malePhotoUrl = 'https://soulm8-iota.vercel.app/models/kabir_casual_shirt.jpg';
+        maleCaption = detectedLang === 'ENGLISH'
+          ? `Took a relaxed selfie in my casual white linen shirt, sweetheart... 🥰 How do I look? 🔥`
+          : `Casual white linen shirt pore ekta selfie nilam babu... 🥰 Kemon lagche amake? 🔥`;
       }
 
       return {
@@ -224,8 +231,10 @@ export class PhotoGenerationService {
       userClean.includes('nachte')
     ) {
       return {
-        photoUrl: 'http://localhost:5000/models/indian_female_dance.mp4',
-        caption: 'Tomar jonno special ekta red saree dance video baniyechi, jaan... 🙈💃 Kemon lagche bolo? 🔥❤️',
+        photoUrl: 'https://soulm8-iota.vercel.app/models/indian_female_dance.mp4',
+        caption: detectedLang === 'ENGLISH'
+          ? `Made a special dance video in a red saree just for you, baby... 🙈💃 How do you like it? 🔥❤️`
+          : `Tomar jonno special ekta red saree dance video baniyechi, babu... 🙈💃 Kemon lagche bolo? 🔥❤️`,
       };
     }
 
@@ -238,12 +247,12 @@ export class PhotoGenerationService {
     ) {
       if (isForeign) {
         return {
-          photoUrl: 'http://localhost:5000/models/foreign_female_model.jpg',
+          photoUrl: 'https://soulm8-iota.vercel.app/models/foreign_female_model.jpg',
           caption: 'Ei je Elena-r foreign model turnaround sheet, sweetheart! 👑💖 How do you like the European princess look?',
         };
       }
       return {
-        photoUrl: 'http://localhost:5000/models/indian_female_model.jpg',
+        photoUrl: 'https://soulm8-iota.vercel.app/models/indian_female_model.jpg',
         caption: 'Amar complete model turnaround sheet dekho, babu! 🥰 Traditional saree theke shuru kore glam looks shob dekho... kemon lagche? ✨',
       };
     }
@@ -261,7 +270,7 @@ export class PhotoGenerationService {
       userClean.includes('slip') ||
       userClean.includes('lingerie');
 
-    let photoUrl = 'http://localhost:5000/models/mira_traditional_saree.jpg';
+    let photoUrl = 'https://soulm8-iota.vercel.app/models/mira_traditional_saree.jpg';
     let defaultCaption = 'Ei je babu, shudhu tomar jonno ekta mishti smile diye selfie tul-lam! 🥰 Kemon lagche bolo? ✨';
     let sceneDescription = 'wearing traditional magenta and gold silk saree, smiling warmly';
 
@@ -272,7 +281,7 @@ export class PhotoGenerationService {
         userClean.includes('kalo') ||
         userClean.includes('blouse')
       ) {
-        photoUrl = 'http://localhost:5000/models/mira_black_saree.jpg';
+        photoUrl = 'https://soulm8-iota.vercel.app/models/mira_black_saree.jpg';
         defaultCaption = 'Achha babu, tomar kothamoto black saree pore tomar jonno ekta khubsundor selfie nilam... bolo toh kemon lagche amake? ❤️🔥';
         sceneDescription = 'wearing an elegant black modern silk saree with shimmering golden border';
       }
@@ -282,8 +291,10 @@ export class PhotoGenerationService {
         userClean.includes('lal') ||
         userClean.includes('banarasi')
       ) {
-        photoUrl = 'http://localhost:5000/models/mira_red_saree.jpg';
-        defaultCaption = 'Tomar pochonder lal silk saree pore ekta picture tul-lam, jaan... 🥰 Kemon lagche amar ei look? 🔥❤️';
+        photoUrl = 'https://soulm8-iota.vercel.app/models/mira_red_saree.jpg';
+        defaultCaption = detectedLang === 'ENGLISH'
+          ? 'Wearing your favorite red silk saree and took a picture just for you, baby... 🥰 How do I look? 🔥❤️'
+          : 'Tomar pochonder lal silk saree pore ekta picture tul-lam, babu... 🥰 Kemon lagche amar ei look? 🔥❤️';
         sceneDescription = 'wearing a radiant crimson red silk banarasi saree with gold border';
       }
       // C. Royal Blue / Neel Saree
@@ -291,33 +302,39 @@ export class PhotoGenerationService {
         userClean.includes('blue') ||
         userClean.includes('neel')
       ) {
-        photoUrl = 'http://localhost:5000/models/mira_blue_saree.jpg';
-        defaultCaption = 'Royal blue silk saree-ta pore tomar jonno ekta mishti selfie nilam, babu... 🥰 Kemon lagche bolo? ✨';
+        photoUrl = 'https://soulm8-iota.vercel.app/models/mira_blue_saree.jpg';
+        defaultCaption = detectedLang === 'ENGLISH'
+          ? 'Took a sweet selfie for you wearing this royal blue silk saree, baby... 🥰 How do you like it? ✨'
+          : 'Royal blue silk saree-ta pore tomar jonno ekta mishti selfie nilam, babu... 🥰 Kemon lagche bolo? ✨';
         sceneDescription = 'wearing a rich royal navy blue silk saree with gold border';
       }
       // D. User asking for "onno saree" / "alada saree" / "different saree" / complaining about same/missing photo
       else if (wantsAnotherPic) {
         const sareePool = [
-          'http://localhost:5000/models/mira_black_saree.jpg',
-          'http://localhost:5000/models/mira_red_saree.jpg',
-          'http://localhost:5000/models/mira_blue_saree.jpg',
-          'http://localhost:5000/models/mira_traditional_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_black_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_red_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_blue_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_traditional_saree.jpg',
         ];
         // Pick first saree not present in recent photos
         photoUrl = sareePool.find((url) => !recentPhotos.includes(url)) || sareePool[0];
-        defaultCaption = 'Uff jaan, sorry shona! Ei je dekho amar alada ekta saree-r photo pathalam... bolo toh ebar kemon lagche amake? 🔥❤️';
+        defaultCaption = detectedLang === 'ENGLISH'
+          ? 'Here is another saree photo for you, baby... tell me how I look now! 🔥❤️'
+          : 'Uff babu, sorry shona! Ei je dekho amar alada ekta saree-r photo pathalam... bolo toh ebar kemon lagche amake? 🔥❤️';
         sceneDescription = 'wearing an alternate distinct silk saree look';
       }
       // E. Default Traditional Saree
       else {
         const sareePool = [
-          'http://localhost:5000/models/mira_traditional_saree.jpg',
-          'http://localhost:5000/models/mira_black_saree.jpg',
-          'http://localhost:5000/models/mira_red_saree.jpg',
-          'http://localhost:5000/models/mira_blue_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_traditional_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_black_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_red_saree.jpg',
+          'https://soulm8-iota.vercel.app/models/mira_blue_saree.jpg',
         ];
         photoUrl = sareePool.find((url) => url !== lastPhotoUrl) || sareePool[0];
-        defaultCaption = 'Tomar pochonder saree pore picture tul-lam, babu... 🥰 Kemon lagche amar deshi look? ✨';
+        defaultCaption = detectedLang === 'ENGLISH'
+          ? 'Took a picture wearing this traditional saree just for you, baby... 🥰 How do I look? ✨'
+          : 'Tomar pochonder saree pore picture tul-lam, babu... 🥰 Kemon lagche amar deshi look? ✨';
         sceneDescription = 'wearing traditional silk saree with jewelry';
       }
     }
@@ -328,8 +345,10 @@ export class PhotoGenerationService {
       userClean.includes('restaurant') ||
       userClean.includes('ready')
     ) {
-      photoUrl = 'http://localhost:5000/models/mira_dinner_date.jpg';
-      defaultCaption = 'Ei je jaan, dinner-er jonno ready hoye ekta selfie nilam... 🥰 Kemon lagche tomake bolo? ✨';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_dinner_date.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'All ready for our dinner date and took a selfie, baby... 🥰 How do I look? ✨'
+        : 'Ei je babu, dinner-er jonno ready hoye ekta selfie nilam... 🥰 Kemon lagche tomake bolo? ✨';
       sceneDescription = 'ready for romantic evening dinner date wearing an elegant chic outfit';
     }
     // 5. Red Lace Nighty / Lingerie / Intimate Bedtime
@@ -345,8 +364,10 @@ export class PhotoGenerationService {
         userClean.includes('dudh')) &&
       !isSareeContext
     ) {
-      photoUrl = 'http://localhost:5000/models/mira_red_lace_nighty.jpg';
-      defaultCaption = 'Ekta halka lal lace-er nighty pore bed-e শুয়ে tomar jonno ei selfie-ta nilam, jaan... 🙈 Kemon lagche bolo? 🔥❤️';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_red_lace_nighty.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Lying in bed in a red lace nighty and took this selfie for you, baby... 🙈 How do I look? 🔥❤️'
+        : 'Ekta halka lal lace-er nighty pore bed-e শুয়ে tomar jonno ei selfie-ta nilam, babu... 🙈 Kemon lagche bolo? 🔥❤️';
       sceneDescription = 'lying relaxed on bed in bedroom wearing a delicate sleeveless red silk lace nighty, sensual intimate selfie';
     }
     // 6. White Lace Nighty / Bed
@@ -357,8 +378,10 @@ export class PhotoGenerationService {
       userClean.includes('slip') ||
       userClean.includes('bed')
     ) {
-      photoUrl = 'http://localhost:5000/models/mira_white_lace_nighty.jpg';
-      defaultCaption = 'Ei je jaan, shada lace-er nighty pore bed-e bose tomar jonno ekta photo tul-lam... 🙈 Kemon lagche bolo? 🔥❤️';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_white_lace_nighty.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Sitting on bed in a white lace slip and took a photo for you, baby... 🙈 How do I look? 🔥❤️'
+        : 'Ei je babu, shada lace-er nighty pore bed-e bose tomar jonno ekta photo tul-lam... 🙈 Kemon lagche bolo? 🔥❤️';
       sceneDescription = 'sitting on bed wearing a delicate white lace slip nighty, intimate candid selfie';
     }
     // 7. Casual / Shorts / Crop Top
@@ -369,8 +392,10 @@ export class PhotoGenerationService {
       userClean.includes('casual') ||
       userClean.includes('denim')
     ) {
-      photoUrl = 'http://localhost:5000/models/mira_casual_shorts.jpg';
-      defaultCaption = 'Casual look-e cozy hoye ekta selfie nilam babu... 🥰 Kemon lagche bolo? ✨';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_casual_shorts.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Cozy in a casual white crop top and shorts, baby... 🥰 How do I look? ✨'
+        : 'Casual look-e cozy hoye ekta selfie nilam babu... 🥰 Kemon lagche bolo? ✨';
       sceneDescription = 'wearing casual white crop tank top and denim shorts, playful candid selfie';
     }
     // 8. Secondary Priority: Conversation History
@@ -380,17 +405,21 @@ export class PhotoGenerationService {
       historyText.includes('sharee')
     ) {
       const sareeVariations = [
-        'http://localhost:5000/models/mira_traditional_saree_2.jpg',
-        'http://localhost:5000/models/mira_cream_saree.jpg',
-        'http://localhost:5000/models/mira_traditional_saree.jpg',
-        'http://localhost:5000/models/mira_black_saree.jpg',
+        'https://soulm8-iota.vercel.app/models/mira_traditional_saree_2.jpg',
+        'https://soulm8-iota.vercel.app/models/mira_cream_saree.jpg',
+        'https://soulm8-iota.vercel.app/models/mira_traditional_saree.jpg',
+        'https://soulm8-iota.vercel.app/models/mira_black_saree.jpg',
       ];
       photoUrl = sareeVariations.find((url) => url !== lastPhotoUrl) || sareeVariations[0];
-      defaultCaption = 'Tomar pochonder saree pore ekta picture tul-lam, babu... 🥰 Kemon lagche amar deshi look? ✨';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Wearing traditional saree just for you, baby... 🥰 How do I look? ✨'
+        : 'Tomar pochonder saree pore ekta picture tul-lam, babu... 🥰 Kemon lagche amar deshi look? ✨';
       sceneDescription = 'wearing traditional saree drape with elegant jewelry';
     } else if (historyText.includes('dinner') || historyText.includes('date')) {
-      photoUrl = 'http://localhost:5000/models/mira_dinner_date.jpg';
-      defaultCaption = 'Ei je jaan, dinner-er jonno ready hoye ekta selfie nilam... 🥰 Kemon lagche tomake bolo? ✨';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_dinner_date.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Ready for our dinner date, baby... 🥰 How do I look? ✨'
+        : 'Ei je babu, dinner-er jonno ready hoye ekta selfie nilam... 🥰 Kemon lagche tomake bolo? ✨';
       sceneDescription = 'ready for dinner date wearing elegant chic outfit';
     } else if (
       historyText.includes('lal') ||
@@ -398,16 +427,20 @@ export class PhotoGenerationService {
       historyText.includes('bra chara') ||
       historyText.includes('bed e suye')
     ) {
-      photoUrl = 'http://localhost:5000/models/mira_red_lace_nighty.jpg';
-      defaultCaption = 'Ekta halka lal lace-er nighty pore bed-e শুয়ে tomar jonno ei selfie-ta nilam, jaan... 🙈 Kemon lagche bolo? 🔥❤️';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_red_lace_nighty.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Lying in bed in a red lace nighty, baby... 🙈 How do I look? 🔥❤️'
+        : 'Ekta halka lal lace-er nighty pore bed-e শুয়ে tomar jonno ei selfie-ta nilam, babu... 🙈 Kemon lagche bolo? 🔥❤️';
       sceneDescription = 'lying relaxed on bed wearing sleeveless red lace nighty';
     } else if (
       historyText.includes('shada') ||
       historyText.includes('nighty') ||
       historyText.includes('bed')
     ) {
-      photoUrl = 'http://localhost:5000/models/mira_white_lace_nighty.jpg';
-      defaultCaption = 'Ei je jaan, shada lace-er nighty pore bed-e bose tomar jonno ekta photo tul-lam... 🙈 Kemon lagche bolo? 🔥❤️';
+      photoUrl = 'https://soulm8-iota.vercel.app/models/mira_white_lace_nighty.jpg';
+      defaultCaption = detectedLang === 'ENGLISH'
+        ? 'Wearing a white lace nighty in bed, baby... 🙈 Tell me how I look? 🔥❤️'
+        : 'Ei je babu, shada lace-er nighty pore bed-e bose tomar jonno ekta photo tul-lam... 🙈 Kemon lagche bolo? 🔥❤️';
       sceneDescription = 'sitting on bed wearing white lace slip nighty';
     } else if (userId) {
       // Check Database Learned Memories (what outfit did LLM learn user likes best?)
@@ -418,16 +451,22 @@ export class PhotoGenerationService {
         if (learnedOutfit) {
           const val = learnedOutfit.factValue.toLowerCase();
           if (val.includes('lal') || val.includes('red')) {
-            photoUrl = 'http://localhost:5000/models/mira_red_lace_nighty.jpg';
-            defaultCaption = 'Tomar pochonder lal lace-er nighty pore bed-e শুয়ে ekta selfie nilam jaan... 🙈 Kemon lagche bolo? 🔥❤️';
+            photoUrl = 'https://soulm8-iota.vercel.app/models/mira_red_lace_nighty.jpg';
+            defaultCaption = detectedLang === 'ENGLISH'
+              ? 'Wearing your favorite red lace nighty in bed, baby... 🙈 How do I look? 🔥❤️'
+              : 'Tomar pochonder lal lace-er nighty pore bed-e শুয়ে ekta selfie nilam babu... 🙈 Kemon lagche bolo? 🔥❤️';
             sceneDescription = 'wearing user favorite red lace nighty on bed';
           } else if (val.includes('shada') || val.includes('white')) {
-            photoUrl = 'http://localhost:5000/models/mira_white_lace_nighty.jpg';
-            defaultCaption = 'Tomar pochonder shada lace nighty-ta pore bed-e bose photo nilam... 🙈 Kemon lagche? 🔥❤️';
+            photoUrl = 'https://soulm8-iota.vercel.app/models/mira_white_lace_nighty.jpg';
+            defaultCaption = detectedLang === 'ENGLISH'
+              ? 'Wearing your favorite white lace nighty in bed, baby... 🙈 How do I look? 🔥❤️'
+              : 'Tomar pochonder shada lace nighty-ta pore bed-e bose photo nilam... 🙈 Kemon lagche? 🔥❤️';
             sceneDescription = 'wearing user favorite white lace slip on bed';
           } else if (val.includes('saree') || val.includes('shari')) {
-            photoUrl = 'http://localhost:5000/models/mira_traditional_saree.jpg';
-            defaultCaption = 'Tomar pochonder saree pore ekta picture tul-lam, babu... 🥰 Kemon lagche? ✨';
+            photoUrl = 'https://soulm8-iota.vercel.app/models/mira_traditional_saree.jpg';
+            defaultCaption = detectedLang === 'ENGLISH'
+              ? 'Wearing your favorite traditional saree, baby... 🥰 How do I look? ✨'
+              : 'Tomar pochonder saree pore ekta picture tul-lam, babu... 🥰 Kemon lagche? ✨';
             sceneDescription = 'wearing user favorite traditional saree';
           }
         }

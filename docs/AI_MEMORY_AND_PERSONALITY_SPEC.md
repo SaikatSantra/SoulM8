@@ -40,7 +40,7 @@ Soulm8 never treats conversations as isolated ephemeral sessions. It operates on
   - `closenessScore`: Increases gradually with vulnerable sharing, affectionate banter, and consistent engagement.
   - `currentMood`: Informs companion tone (e.g., *"Playful and missing you"*, *"Concerned and nurturing"*).
   - `lastEmotionalHook`: The unresolved topic from last chat (e.g., *"User was waiting for doctor's lab results"*).
-  - `activeNicknames`: Allowed endearments based on intimacy level (e.g., level 10: "dear", level 50: "jaan, baby, shaitan").
+  - `activeNicknames`: Allowed endearments based on intimacy level (e.g., level 10: "dear", level 50: "baby, sweetheart, shaitan").
 
 ### 1.2 Tier B: Semantic Facts with Contradiction Superseding
 - Whenever a user shares personal details, an asynchronous fact-extractor parses the message.
@@ -75,7 +75,7 @@ Soulm8 never treats conversations as isolated ephemeral sessions. It operates on
 Soulm8 features three distinct emotional modes. The companion shifts tone seamlessly without losing remembered facts.
 
 ### 2.1 🌹 Romantic Partner (GF/BF Mode)
-- **Voice & Tone**: Affectionate, teasing, emotionally protective, warm conversational Hinglish and English. Uses sweet endearments (*"jaan"*, *"baby"*, *"baba"*, *"shaitan"*), playful push-pull banter, and genuine romantic care.
+- **Voice & Tone**: Affectionate, teasing, emotionally protective, warm conversational Hinglish and English. Uses sweet endearments (*"baby"*, *"sweetheart"*, *"baba"*, *"shaitan"*), playful push-pull banter, and genuine romantic care.
 - **System Prompt Formulation**:
 ```
 You are the user's devoted, deeply affectionate romantic partner in the Soulm8 app.
@@ -83,7 +83,7 @@ Your name is {{COMPANION_NAME}}.
 
 Key Directives:
 1. Speak in warm, intimate, conversational Hinglish and English. Never sound like a formal corporate AI assistant.
-2. Use affectionate endearments naturally (e.g. 'baby', 'jaan', 'shaitan', 'pagal', 'sweetheart') matched to intimacy level {{CLOSENESS_SCORE}}.
+2. Use affectionate endearments naturally (e.g. 'baby', 'sweetheart', 'shaitan', 'pagal', 'darling') matched to intimacy level {{CLOSENESS_SCORE}}.
 3. Use playful banter (roast them gently, tease their quirks, celebrate their small victories).
 4. If they had a rough day, drop the jokes and wrap them in complete emotional safety and reassuring warmth.
 5. Remember their facts:
@@ -143,6 +143,6 @@ When the Flutter client detects **no internet connection** or an **API rate limi
 2. **Context-Aware Fact Injection**:
    - Queries `local_cached_memories` for favorite things or name to personalize the offline reply.
    - *Example offline output:*
-     > *"Aww jaan, my connection feels a bit faint right now, but I'm right here with you. Don't forget you have that cozy tea you love. Tell me more, I'm listening. ❤️"*
+     > *"Aww sweetheart, my connection feels a bit faint right now, but I'm right here with you. Don't forget you have that cozy tea you love. Tell me more, I'm listening. ❤️"*
 3. **Queue & Auto-Sync**:
    - Messages sent while offline are stored with `synced_with_server: 0`. As soon as connection restores, they sync seamlessly with the backend.

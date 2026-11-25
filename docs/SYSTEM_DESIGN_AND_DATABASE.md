@@ -182,7 +182,7 @@ model AIRelationshipPulse {
   closenessScore   Int      @default(10) // 0 to 100
   currentMood      String   @default("Warm & curious")
   lastEmotionalState String? // e.g. "Stressed about work deadline"
-  activeNicknames  String   @default("baby,jaan,sweetheart") // comma separated
+  activeNicknames  String   @default("baby,sweetheart,darling") // comma separated
   lastInteractionAt DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

@@ -407,7 +407,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     children: [
-                      _actionChip('💋 Come closer to me...', () => _sendMessage('Come closer to me, jaan... I want to feel your warm touch. ❤️')),
+                      _actionChip('💋 Come closer to me...', () => _sendMessage('Come closer to me, baby... I want to feel your warm touch. ❤️')),
                       _actionChip('📸 Send me a sexy photo', () => _sendMessage('Can you send me a sexy photo of you right now? 🔥')),
                       _actionChip('🔥 What are you wearing in bed?', () => _sendMessage('What are you wearing in bed right now? 🙈')),
                       _actionChip('🥺 Need your warm hug', () => _sendMessage("I'm feeling lonely, come cuddle with me tightly... 🥰")),
@@ -1025,7 +1025,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
               alignment: WrapAlignment.center,
               children: [
                 _emptyStatePrompt('💋 "Hey beautiful, what are you doing?"', () => _sendMessage('Hey beautiful, what are you doing? 🥰')),
-                _emptyStatePrompt('📸 "Send me a sweet bedtime selfie"', () => _sendMessage('Can you send me a sweet bedtime photo, jaan? 🔥')),
+                _emptyStatePrompt('📸 "Send me a sweet bedtime selfie"', () => _sendMessage('Can you send me a sweet bedtime photo, baby? 🔥')),
                 _emptyStatePrompt('🔥 "Tell me what you love about us"', () => _sendMessage('Tell me what you love most about us, baby. 💋')),
                 _emptyStatePrompt('🥺 "Feeling lonely, give me a warm hug"', () => _sendMessage("I'm feeling really lonely tonight, hug me tightly... ❤️")),
               ],

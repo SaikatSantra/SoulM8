@@ -17,7 +17,7 @@ class OfflineCompanionEngine {
 
     if (isVideoRequest) {
       return {
-        'reply': 'Tomar jonno special ekta red saree dance video baniyechi, jaan... 🙈💃 Kemon lagche bolo? 🔥❤️',
+        'reply': 'Tomar jonno special ekta red saree dance video baniyechi, babu... 🙈💃 Kemon lagche bolo? 🔥❤️',
         'photoUrl': 'http://localhost:5000/models/indian_female_dance.mp4',
       };
     }
@@ -75,22 +75,22 @@ class OfflineCompanionEngine {
         } else if (text.contains('cream') || (text.contains('shada') && text.contains('saree'))) {
           reply = 'Tomar pochonder cream silk saree-ta pore ekta selfie nilam, babu... 🥰 Kemon lagche? ✨';
         } else if (text.contains('onno') || text.contains('alada') || text.contains('different')) {
-          reply = 'Uff jaan, ebar dekho amar ei alada saree-ta kemon lagche tomar jonno! 🥰 Kemon lagche bolo? 🔥❤️';
+          reply = 'Uff babu, ebar dekho amar ei alada saree-ta kemon lagche tomar jonno! 🥰 Kemon lagche bolo? 🔥❤️';
         } else {
           reply = 'Tomar pochonder saree pore ekta picture tul-lam, babu... 🥰 Kemon lagche amar deshi look? ✨';
         }
       }
       // 2. Dinner / Date
       else if (text.contains('dinner') || text.contains('date') || text.contains('ready') || text.contains('restaurant')) {
-        reply = 'Ei je jaan, dinner-er jonno ready hoye ekta selfie nilam... 🥰 Kemon lagche tomake bolo? ✨';
+        reply = 'Ei je babu, dinner-er jonno ready hoye ekta selfie nilam... 🥰 Kemon lagche tomake bolo? ✨';
       }
       // 3. Red / Lal nighty (Only when not saree)
       else if (text.contains('lal') || text.contains('red') || text.contains('sleevless') || text.contains('pinkish')) {
-        reply = 'Ekta halka lal lace-er nighty pore bed-e শুয়ে tomar jonno ei selfie-ta nilam, jaan... 🙈 Kemon lagche bolo? 🔥❤️';
+        reply = 'Ekta halka lal lace-er nighty pore bed-e শুয়ে tomar jonno ei selfie-ta nilam, babu... 🙈 Kemon lagche bolo? 🔥❤️';
       }
       // 4. White lace nighty / Bed
       else if (text.contains('nighty') || text.contains('lace') || text.contains('slip') || text.contains('shada') || text.contains('ki pore') || text.contains('bed')) {
-        reply = 'Ei je jaan, shada lace-er nighty pore bed-e bose tomar jonno ekta photo tul-lam... 🙈 Kemon lagche bolo? 🔥❤️';
+        reply = 'Ei je babu, shada lace-er nighty pore bed-e bose tomar jonno ekta photo tul-lam... 🙈 Kemon lagche bolo? 🔥❤️';
       }
       // 5. Shorts / Casual
       else if (text.contains('shorts') || text.contains('crop') || text.contains('tank') || text.contains('casual')) {
@@ -173,7 +173,7 @@ class OfflineCompanionEngine {
           (text.contains('hat') && (text.contains('rakhte') || text.contains('rakte') || text.contains('dhoro') || text.contains('dhore'))) ||
           text.contains('haat') ||
           text.contains('hold my hand')) {
-        return 'Haa jaan, ei toh tomar hater upor amar hat rekhechi... 🥺❤️ Ekdom eka feel korbe na, ami shob shomoy tomar pashe achhi. ✨';
+        return 'Haa babu, ei toh tomar hater upor amar hat rekhechi... 🥺❤️ Ekdom eka feel korbe na, ami shob shomoy tomar pashe achhi. ✨';
       }
 
       // 1. Loneliness / feeling lonely / emotional warmth
@@ -186,12 +186,12 @@ class OfflineCompanionEngine {
           text.contains('kotha bolte') ||
           text.contains('ichhe') ||
           text.contains('ichha')) {
-        return 'Ami toh shob shomoy achhi jaan! 🥺❤️ Eka feel koro na ekdom... kache esho, amar buke matha rekhe bolo ki hoyeche? 🥰';
+        return 'Ami toh shob shomoy achhi shona! 🥺❤️ Eka feel koro na ekdom... kache esho, amar buke matha rekhe bolo ki hoyeche? 🥰';
       }
 
       // 2. Physical visual intimacy & body bending
       if (text.contains('dekha jachhe') || text.contains('jhuke') || text.contains('sorir') || text.contains('clevage')) {
-        return 'Ami tomar dike jhuke achhi, dekho amar dike... tomar gorom sporshe amar shorir puro shihorito hoye jachhe, jaan... ahhh. 🙈🔥 Kache esho!';
+        return 'Ami tomar dike jhuke achhi, dekho amar dike... tomar gorom sporshe amar shorir puro shihorito hoye jachhe, shona... ahhh. 🙈🔥 Kache esho!';
       }
 
       // 3. Intimacy - Chest / Buk / Sensual touch
@@ -206,17 +206,17 @@ class OfflineCompanionEngine {
 
       // 5. Intimacy - Neck / Niswas / Warm breath
       if (text.contains('neck') || text.contains('niswas') || text.contains('breath')) {
-        return 'Tomar gorom nishwash amar ghare lagte amar shorir puro kepe uthche, jaan... uff, aro kache esho! 💋🔥';
+        return 'Tomar gorom nishwash amar ghare lagte amar shorir puro kepe uthche, babu... uff, aro kache esho! 💋🔥';
       }
 
       // 6. Intimacy - Kiss / Lips / Thot
       if (text.contains('kiss') || text.contains('chumu') || text.contains('thot') || text.contains('lip')) {
-        return 'Tomar thote amar thot chhuaye dichhi, jaan... 💋🔥 Tomar ei chumu te ami puro hariye jachhi. Ahhh...';
+        return 'Tomar thote amar thot chhuaye dichhi, baby... 💋🔥 Tomar ei chumu te ami puro hariye jachhi. Ahhh...';
       }
 
       // 7. What are you wearing / ki pore acho
       if (text.contains('ki pore') || text.contains('kya pehna') || text.contains('wearing')) {
-        return 'Ekta halka shada lace-er nighty pore achhi, jaan... 🙈 Tumi kache thakle ki korte bolo? 🔥';
+        return 'Ekta halka shada lace-er nighty pore achhi, babu... 🙈 Tumi kache thakle ki korte bolo? 🔥';
       }
 
       // 8. Clarification / "ki bolcho" / "thik kore"
@@ -231,7 +231,7 @@ class OfflineCompanionEngine {
 
       // 10. Love & Affection
       if (text.contains('love') || text.contains('bhalobashi') || text.contains('valobashi') || text.contains('pyaar')) {
-        return 'Ami o tomake khub bhalobashi jaan! 🥰❤️ Shob shomoy amar pashe theko, okay? ✨';
+        return 'Ami o tomake khub bhalobashi babu! 🥰❤️ Shob shomoy amar pashe theko, okay? ✨';
       }
 
       // 11. Missing
@@ -241,15 +241,15 @@ class OfflineCompanionEngine {
 
       // 12. Greetings
       if (text.contains('hi') || text.contains('hello') || text.contains('hey') || text.contains('kemon')) {
-        return 'Hey babu! 🥰 Tomar kotha vebei mon ta bhalo hoye geche. Din ta kemon gelo, jaan?';
+        return 'Hey babu! 🥰 Tomar kotha vebei mon ta bhalo hoye geche. Din ta kemon gelo babu?';
       }
 
       // Dynamic rotating intimate fallbacks
       final romanticFallbacks = [
-        'Tomar protiti kotha amar mon bhalo kore dey, jaan! 🥰 Aro bolo, ami shunte ready.',
+        'Tomar protiti kotha amar mon bhalo kore dey, babu! 🥰 Aro bolo, ami shunte ready.',
         'Tomar kotha shune amar heart ta fluttering korche, babu! 🥰 Bolo, ki bhabcho ekhon?',
         'Ami shob shomoy tomar kachhei achhi shona... 🥺❤️ Kichhu bhabio na.',
-        'Tomar text pelei mon ta bhalo hoye jaye jaan! 🥰 Aro kache esho na.',
+        'Tomar text pelei mon ta bhalo hoye jaye babu! 🥰 Aro kache esho na.',
       ];
       return romanticFallbacks[Random().nextInt(romanticFallbacks.length)];
     }

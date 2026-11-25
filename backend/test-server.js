@@ -34,7 +34,7 @@ async function test() {
         Authorization: `Bearer ${loginData.token}`,
       },
       body: JSON.stringify({
-        message: 'Hey jaan, feeling a bit lonely tonight after a long day at work.',
+        message: 'Hey baby, feeling a bit lonely tonight after a long day at work.',
         mode: 'ROMANTIC',
       }),
     });
