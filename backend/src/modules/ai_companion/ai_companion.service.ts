@@ -417,21 +417,10 @@ CRITICAL TWO-WAY CONVERSATION MANDATE:
                 .replace(/জান/g, 'বাবু')
                 .replace(/जान/g, 'बाबू');
 
+              // Keep reply naturally paced (up to 3 concise sentences without truncation)
               const sentences = cleaned.match(/[^.!?]+[.!?]+(\s|$)/g);
-              if (sentences && sentences.length > 2) {
-                cleaned = sentences.slice(0, 2).join('').trim();
-              }
-
-              // CRITICAL ANTI-INTERVIEW MANDATE: Ensure reply ends with a follow-up question in the MATCHING language
-              if (
-                !cleaned.endsWith('?') &&
-                !cleaned.endsWith('?🔥') &&
-                !cleaned.endsWith('?❤️') &&
-                !cleaned.endsWith('?🙈') &&
-                !cleaned.endsWith('?💋') &&
-                !cleaned.endsWith('?✨')
-              ) {
-                cleaned += LanguageDetector.getFollowUpQuestion(detectedLang, gender);
+              if (sentences && sentences.length > 3) {
+                cleaned = sentences.slice(0, 3).join('').trim();
               }
 
               return cleaned;
