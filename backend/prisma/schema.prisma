@@ -124,6 +124,7 @@ model AIMessage {
   content           String
   activeMode        String         @default("ROMANTIC") // ROMANTIC, SUPPORTIVE, MINDFUL
   generatedPhotoUrl String?        // If message includes a requested face photo
+  audioUrl          String?        // If message includes synthetic voice note
   createdAt         DateTime       @default(now())
 
   conversation      AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)

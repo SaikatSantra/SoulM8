@@ -5,6 +5,7 @@ import { MemoryEngineService } from './memory_engine.service.js';
 import { PhotoGenerationService } from './photo_generation.service.js';
 import { TrainingService } from './training_service.js';
 import { LanguageDetector, SupportedLanguage } from './language_detector.js';
+import { TTSService } from './tts_service.js';
 
 export type RomanticStage =
   | 'STAGE_1_AFFECTIONATE'
@@ -225,6 +226,26 @@ export class AICompanionService {
       } catch (_) {}
     }
 
+    // 6.6. Synthetic Voice Note Generation
+    let attachedAudioUrl: string | null = null;
+    const lowerText = textContent.toLowerCase();
+    const asksForVoice =
+      lowerText.includes('voice') ||
+      lowerText.includes('audio') ||
+      lowerText.includes('shunbo') ||
+      lowerText.includes('shunao') ||
+      lowerText.includes('kotha bolo') ||
+      lowerText.includes('katha bolo') ||
+      lowerText.includes('speak') ||
+      lowerText.includes('voice note') ||
+      lowerText.includes('gola shuni');
+
+    if (asksForVoice || (Math.random() < 0.15 && progressionState.currentStage !== 'STAGE_1_AFFECTIONATE')) {
+      try {
+        attachedAudioUrl = await TTSService.synthesizeSpeech(replyText, profile.gender);
+      } catch (_) {}
+    }
+
     // 7. Store AI message
     const aiMessage = await prisma.aIMessage.create({
       data: {
@@ -233,6 +254,7 @@ export class AICompanionService {
         content: replyText,
         activeMode,
         generatedPhotoUrl: attachedPhotoUrl,
+        audioUrl: attachedAudioUrl,
       },
     });
 
@@ -244,6 +266,7 @@ export class AICompanionService {
     return {
       reply: replyText,
       photoUrl: attachedPhotoUrl,
+      audioUrl: attachedAudioUrl,
       activeMode,
       messageId: aiMessage.id,
       createdAt: aiMessage.createdAt.toISOString(),
@@ -919,6 +942,7 @@ CRITICAL NATURAL CHATTING MANDATE:
       content: m.content,
       activeMode: m.activeMode,
       photoUrl: m.generatedPhotoUrl,
+      audioUrl: m.audioUrl,
       createdAt: m.createdAt.toISOString(),
     }));
   }

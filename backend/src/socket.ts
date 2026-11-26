@@ -3,6 +3,8 @@ import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { ENV } from './config/env.js';
 import { HumanChatService } from './modules/human_chat/human_chat.service.js';
+import { AICompanionService } from './modules/ai_companion/ai_companion.service.js';
+import { ProactiveService } from './modules/ai_companion/proactive_service.js';
 import { prisma } from './prisma.js';
 
 let ioInstance: Server | null = null;
@@ -163,6 +165,47 @@ export function setupSocketIO(server: HttpServer) {
       } catch (err) {
         console.error('Mark read error:', err);
       }
+    });
+
+    // ----------------------------------------------------
+    // AI Companion Real-Time Streaming & Typing Gateway
+    // ----------------------------------------------------
+    socket.on('ai:send_message', async (data: { content: string; mode?: string; photoUrl?: string }) => {
+      try {
+        const { content, mode, photoUrl } = data;
+        if (!content && !photoUrl) return;
+
+        const profile = await prisma.companionProfile.findUnique({ where: { userId } });
+        const companionName = profile?.name || 'Mira';
+
+        // 1. Emit typing indicator immediately
+        socket.emit('ai:typing', { isTyping: true, companionName });
+
+        // 2. Process AI chat
+        const result = await AICompanionService.chat(userId, content, mode, photoUrl);
+
+        // 3. Emit response
+        socket.emit('ai:typing', { isTyping: false, companionName });
+        socket.emit('ai:new_message', {
+          id: result.messageId,
+          isUser: false,
+          content: result.reply,
+          activeMode: result.activeMode,
+          photoUrl: result.photoUrl,
+          audioUrl: result.audioUrl,
+          createdAt: result.createdAt,
+          companionName,
+        });
+      } catch (err: any) {
+        socket.emit('ai:typing', { isTyping: false });
+        socket.emit('ai:error', { error: err.message || 'AI message processing failed' });
+      }
+    });
+
+    socket.on('ai:proactive_check', async () => {
+      try {
+        await ProactiveService.checkAndTriggerProactiveMessage(userId);
+      } catch (_) {}
     });
 
     // Disconnect

@@ -7,6 +7,7 @@ import '../features/profile/presentation/profile_screen.dart';
 import '../features/human_chat/presentation/human_chat_screen.dart';
 import '../features/ai_companion/presentation/ai_chat_screen.dart';
 import '../features/ai_companion/presentation/memories_screen.dart';
+import '../features/ai_companion/presentation/gallery_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
@@ -55,6 +56,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/memories',
         builder: (context, state) => const MemoriesScreen(),
+      ),
+      GoRoute(
+        path: '/gallery',
+        builder: (context, state) => const GalleryScreen(),
       ),
     ],
   );

@@ -125,4 +125,78 @@ class AICompanionRepository {
       throw Exception('Could not purge memories');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getGallery() async {
+    try {
+      final response = await ApiClient.client.get(ApiConstants.aiGallery);
+      if (response.data?['photos'] is List) {
+        return (response.data['photos'] as List)
+            .map((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint('getGallery error: $e');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> getPulse() async {
+    try {
+      final response = await ApiClient.client.get(ApiConstants.aiPulse);
+      return Map<String, dynamic>.from(response.data?['pulse'] ?? {});
+    } catch (e) {
+      debugPrint('getPulse error: $e');
+      return {
+        'closenessScore': 20,
+        'levelNumber': 1,
+        'levelTitle': 'Acquaintance',
+        'currentMood': 'Warm & curious',
+        'nextMilestone': 'Close Friend (Level 2 at 30%)',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>?> checkProactive() async {
+    try {
+      final response = await ApiClient.client.post(ApiConstants.aiProactive);
+      if (response.data?['sent'] == true) {
+        return Map<String, dynamic>.from(response.data['message'] ?? {});
+      }
+      return null;
+    } catch (e) {
+      debugPrint('checkProactive error: $e');
+      return null;
+    }
+  }
+
+  Future<void> addMemory(String category, String factKey, String factValue) async {
+    try {
+      await ApiClient.client.post(
+        ApiConstants.aiMemories,
+        data: {
+          'category': category,
+          'factKey': factKey,
+          'factValue': factValue,
+        },
+      );
+    } catch (e) {
+      throw Exception('Could not add memory');
+    }
+  }
+
+  Future<void> updateMemory(String id, {String? factKey, String? factValue, String? category}) async {
+    try {
+      await ApiClient.client.put(
+        '${ApiConstants.aiMemories}/$id',
+        data: {
+          if (factKey != null) 'factKey': factKey,
+          if (factValue != null) 'factValue': factValue,
+          if (category != null) 'category': category,
+        },
+      );
+    } catch (e) {
+      throw Exception('Could not update memory');
+    }
+  }
 }

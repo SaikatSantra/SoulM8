@@ -59,6 +59,10 @@ class ApiConstants {
   static const String aiPurge = '/ai/memories/purge';
   static const String aiTraining = '/ai/training-examples';
   static const String aiCompanion = '/ai/companion';
+  static const String aiGallery = '/ai/gallery';
+  static const String aiProactive = '/ai/proactive-check';
+  static const String aiTTS = '/ai/tts';
+  static const String aiPulse = '/ai/pulse';
 
   // Upload
   static const String upload = '/upload';

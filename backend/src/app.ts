@@ -109,6 +109,14 @@ aiRouter.delete('/training-examples/:id', AICompanionController.deleteTrainingEx
 aiRouter.get('/companion', AICompanionController.getCompanion);
 aiRouter.put('/companion', AICompanionController.updateCompanion);
 
+// Gallery, Proactive Messages, Audio TTS & Relationship Pulse
+aiRouter.get('/gallery', AICompanionController.getGallery);
+aiRouter.post('/proactive-check', AICompanionController.proactiveCheck);
+aiRouter.get('/tts', AICompanionController.tts);
+aiRouter.get('/pulse', AICompanionController.getPulse);
+aiRouter.post('/memories', AICompanionController.addMemory);
+aiRouter.put('/memories/:id', AICompanionController.updateMemory);
+
 app.use('/api/ai', aiRouter);
 
 export { app };

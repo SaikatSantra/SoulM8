@@ -14,6 +14,9 @@ class _MemoriesScreenState extends ConsumerState<MemoriesScreen> {
   bool _isLoading = true;
   Map<String, dynamic>? _pulse;
   List<Map<String, dynamic>> _facts = [];
+  String _selectedCategory = 'ALL';
+
+  final List<String> _categoryTabs = ['ALL', 'PREFERENCE', 'BIOGRAPHICAL', 'RELATIONSHIP', 'EMOTIONAL_TRIGGER'];
 
   @override
   void initState() {
@@ -36,6 +39,11 @@ class _MemoriesScreenState extends ConsumerState<MemoriesScreen> {
     }
   }
 
+  List<Map<String, dynamic>> get _filteredFacts {
+    if (_selectedCategory == 'ALL') return _facts;
+    return _facts.where((f) => (f['category']?.toString().toUpperCase() ?? '') == _selectedCategory).toList();
+  }
+
   Future<void> _deleteSingleFact(String id) async {
     try {
       final repo = ref.read(aiCompanionRepositoryProvider);
@@ -49,6 +57,114 @@ class _MemoriesScreenState extends ConsumerState<MemoriesScreen> {
         );
       }
     } catch (_) {}
+  }
+
+  void _showAddMemoryDialog() {
+    final keyController = TextEditingController();
+    final valueController = TextEditingController();
+    String selectedCat = 'PREFERENCE';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) => AlertDialog(
+          backgroundColor: Soulm8Theme.cardSurface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(
+            children: [
+              Icon(Icons.bookmark_add_rounded, color: Soulm8Theme.primaryRose),
+              SizedBox(width: 8),
+              Text('Teach Companion a Fact', style: TextStyle(color: Colors.white, fontSize: 18)),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Category', style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 12)),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  value: selectedCat,
+                  dropdownColor: Soulm8Theme.cardSurface,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'PREFERENCE', child: Text('Preference (Food, Music, Outfits)')),
+                    DropdownMenuItem(value: 'BIOGRAPHICAL', child: Text('Biographical (Name, Work, City)')),
+                    DropdownMenuItem(value: 'RELATIONSHIP', child: Text('Relationship (Nicknames, Desires)')),
+                    DropdownMenuItem(value: 'EMOTIONAL_TRIGGER', child: Text('Emotional (Comforts, Vulnerability)')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) setModalState(() => selectedCat = val);
+                  },
+                ),
+                const SizedBox(height: 14),
+                const Text('Fact Topic (Key)', style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 12)),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: keyController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'e.g. favorite_color, coffee_habit',
+                    hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text('Detail to Remember', style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 12)),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: valueController,
+                  maxLines: 2,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'e.g. Loves warm black coffee with no sugar',
+                    hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white60)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Soulm8Theme.primaryRose),
+              onPressed: () async {
+                final k = keyController.text.trim();
+                final v = valueController.text.trim();
+                if (k.isEmpty || v.isEmpty) return;
+
+                Navigator.pop(ctx);
+                setState(() => _isLoading = true);
+                try {
+                  final repo = ref.read(aiCompanionRepositoryProvider);
+                  await repo.addMemory(selectedCat, k, v);
+                  await _fetchMemories();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Memory recorded! Your companion now remembers this.')),
+                    );
+                  }
+                } catch (_) {
+                  setState(() => _isLoading = false);
+                }
+              },
+              child: const Text('Save Fact', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _handleCompletePurge() async {
@@ -95,28 +211,62 @@ class _MemoriesScreenState extends ConsumerState<MemoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final score = _pulse?['closenessScore'] ?? 15;
-    final mood = _pulse?['currentMood'] ?? 'Warm & curious';
+    final score = (_pulse?['closenessScore'] ?? 15) as int;
+    final mood = (_pulse?['currentMood'] ?? 'Warm & curious') as String;
+
+    int levelNum = 1;
+    String levelName = 'Acquaintance';
+    String milestoneDesc = 'Next: Close Friend (Level 2 at 30%)';
+
+    if (score >= 80) {
+      levelNum = 4;
+      levelName = 'Romantic Soulmate';
+      milestoneDesc = 'Unconditional Bond (100%)';
+    } else if (score >= 55) {
+      levelNum = 3;
+      levelName = 'Soul Confidant';
+      milestoneDesc = 'Next: Romantic Soulmate (Level 4 at 80%)';
+    } else if (score >= 30) {
+      levelNum = 2;
+      levelName = 'Close Friend';
+      milestoneDesc = 'Next: Soul Confidant (Level 3 at 55%)';
+    }
 
     return Scaffold(
+      backgroundColor: Soulm8Theme.darkBackground,
       appBar: AppBar(
-        title: const Text('Memory & GDPR Autonomy'),
+        backgroundColor: Soulm8Theme.cardSurface,
+        title: const Text('Memory & Relationship Diary', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        actions: [
+          IconButton(
+            tooltip: 'Teach new fact',
+            icon: const Icon(Icons.add_circle_outline, color: Soulm8Theme.primaryRose, size: 26),
+            onPressed: _showAddMemoryDialog,
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Soulm8Theme.primaryRose))
           : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Relationship Pulse Card (Tier A)
+                  // Relationship Pulse & Closeness Card
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: Soulm8Theme.darkCardGradient,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Soulm8Theme.softPeach.withOpacity(0.3)),
+                      border: Border.all(color: Soulm8Theme.primaryRose.withOpacity(0.35)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Soulm8Theme.primaryRose.withOpacity(0.12),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,109 +274,170 @@ class _MemoriesScreenState extends ConsumerState<MemoriesScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Tier A: Relationship Pulse',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Soulm8Theme.softPeach,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.favorite, color: Soulm8Theme.primaryRose, size: 18),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Level $levelNum · $levelName',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  milestoneDesc,
+                                  style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 11),
+                                ),
+                              ],
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Soulm8Theme.primaryRose.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Soulm8Theme.primaryRose.withOpacity(0.5)),
                               ),
                               child: Text(
-                                'Intimacy: $score%',
+                                '$score% Closeness',
                                 style: const TextStyle(
                                   color: Soulm8Theme.primaryRose,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                                  fontSize: 13,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: LinearProgressIndicator(
-                            value: (score as num) / 100.0,
+                            value: score / 100.0,
                             backgroundColor: Colors.white12,
                             valueColor: const AlwaysStoppedAnimation(Soulm8Theme.primaryRose),
-                            minHeight: 8,
+                            minHeight: 10,
                           ),
                         ),
                         const SizedBox(height: 14),
-                        Row(
-                          children: [
-                            const Icon(Icons.favorite, size: 16, color: Soulm8Theme.primaryRose),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Current Companion State: $mood',
-                                style: const TextStyle(color: Soulm8Theme.textLight, fontSize: 13),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.psychology_outlined, size: 18, color: Soulm8Theme.lavenderWhisper),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Companion Heartbeat: $mood',
+                                  style: const TextStyle(color: Soulm8Theme.lavenderWhisper, fontSize: 12, fontWeight: FontWeight.w500),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
 
-                  // Semantic Facts Header & Count (Tier B)
+                  // Semantic Facts Header & Count
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Learned Facts (Tier B)',
+                        'Learned Memories & Facts',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: Soulm8Theme.textLight,
+                          color: Colors.white,
                         ),
                       ),
-                      Text(
-                        '${_facts.length} active facts',
-                        style: const TextStyle(color: Soulm8Theme.textMuted, fontSize: 13),
+                      TextButton.icon(
+                        onPressed: _showAddMemoryDialog,
+                        icon: const Icon(Icons.add, size: 16, color: Soulm8Theme.primaryRose),
+                        label: const Text('Add Fact', style: TextStyle(color: Soulm8Theme.primaryRose, fontSize: 13)),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
                   const Text(
-                    'Soulm8 automatically remembers details you mention and supersedes contradictions. You have complete autonomy to inspect and delete individual facts.',
-                    style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 13, height: 1.3),
+                    'Soulm8 automatically remembers details you mention and keeps facts synchronized. You can also teach custom preferences or erase facts anytime.',
+                    style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 12, height: 1.3),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
 
-                  if (_facts.isEmpty) ...[
+                  // Category Tabs
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: _categoryTabs.map((cat) {
+                        final isSel = _selectedCategory == cat;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: ChoiceChip(
+                            label: Text(
+                              cat.replaceAll('_', ' '),
+                              style: TextStyle(
+                                color: isSel ? Colors.white : Colors.white60,
+                                fontSize: 11,
+                                fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                            selected: isSel,
+                            selectedColor: Soulm8Theme.primaryRose,
+                            backgroundColor: Soulm8Theme.cardSurface,
+                            onSelected: (_) => setState(() => _selectedCategory = cat),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  if (_filteredFacts.isEmpty) ...[
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(28),
                       decoration: BoxDecoration(
                         color: Soulm8Theme.cardSurface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.white10),
                       ),
-                      child: const Center(
-                        child: Text(
-                          'No memories recorded yet.\nStart chatting with your companion!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 14),
-                        ),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.history_edu, color: Colors.white24, size: 48),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'No memories in this category yet',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70, fontSize: 14),
+                          ),
+                          const SizedBox(height: 6),
+                          TextButton(
+                            onPressed: _showAddMemoryDialog,
+                            child: const Text('Add your first memory', style: TextStyle(color: Soulm8Theme.primaryRose)),
+                          ),
+                        ],
                       ),
                     ),
                   ] else ...[
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _facts.length,
+                      itemCount: _filteredFacts.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 10),
                       itemBuilder: (context, idx) {
-                        final fact = _facts[idx];
+                        final fact = _filteredFacts[idx];
                         final category = fact['category'] ?? 'PREFERENCE';
                         final key = fact['factKey'] ?? '';
                         final value = fact['factValue'] ?? '';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/ai_companion_repository.dart';
 import '../../../core/storage/local_database.dart';
 import '../../../core/storage/secure_storage.dart';
+import '../../../core/network/socket_client.dart';
 import '../../offline_simulator/offline_companion_engine.dart';
 
 final aiCompanionRepositoryProvider = Provider<AICompanionRepository>((ref) => AICompanionRepository());
@@ -12,6 +13,7 @@ class AIChatState {
   final bool isThinking;
   final String activeMode; // 'ROMANTIC', 'SUPPORTIVE', 'MINDFUL'
   final List<Map<String, dynamic>> messages;
+  final Map<String, dynamic>? relationshipPulse;
   final String? errorMessage;
 
   AIChatState({
@@ -19,6 +21,7 @@ class AIChatState {
     this.isThinking = false,
     this.activeMode = 'ROMANTIC',
     this.messages = const [],
+    this.relationshipPulse,
     this.errorMessage,
   });
 
@@ -27,6 +30,7 @@ class AIChatState {
     bool? isThinking,
     String? activeMode,
     List<Map<String, dynamic>>? messages,
+    Map<String, dynamic>? relationshipPulse,
     String? errorMessage,
   }) {
     return AIChatState(
@@ -34,6 +38,7 @@ class AIChatState {
       isThinking: isThinking ?? this.isThinking,
       activeMode: activeMode ?? this.activeMode,
       messages: messages ?? this.messages,
+      relationshipPulse: relationshipPulse ?? this.relationshipPulse,
       errorMessage: errorMessage,
     );
   }
@@ -55,10 +60,61 @@ class AIChatController extends StateNotifier<AIChatState> {
       final savedMode = await SecureStorageService.getCompanionMode();
       state = state.copyWith(activeMode: savedMode);
       await loadHistory();
+      await loadPulse();
+      _setupSocketListeners();
+      _checkProactiveGreeting();
     } catch (e) {
       debugPrint('⚠️ AIChatController init error: $e');
       state = state.copyWith(isLoading: false);
     }
+  }
+
+  void _setupSocketListeners() {
+    SocketClient.addConnectListener((socket) {
+      socket.off('ai:typing');
+      socket.off('ai:new_message');
+
+      socket.on('ai:typing', (data) {
+        if (data is Map) {
+          final isTyping = data['isTyping'] == true;
+          state = state.copyWith(isThinking: isTyping);
+        }
+      });
+
+      socket.on('ai:new_message', (data) {
+        if (data is Map) {
+          final newMsg = Map<String, dynamic>.from(data);
+          final msgId = newMsg['id']?.toString();
+          // Avoid duplicate messages
+          if (msgId != null && state.messages.any((m) => m['id'] == msgId)) return;
+
+          state = state.copyWith(
+            isThinking: false,
+            messages: [...state.messages, newMsg],
+          );
+          loadPulse();
+        }
+      });
+    });
+  }
+
+  Future<void> _checkProactiveGreeting() async {
+    try {
+      final proactiveMsg = await _repo.checkProactive();
+      if (proactiveMsg != null && proactiveMsg['id'] != null) {
+        final msgId = proactiveMsg['id'].toString();
+        if (!state.messages.any((m) => m['id'] == msgId)) {
+          state = state.copyWith(messages: [...state.messages, proactiveMsg]);
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> loadPulse() async {
+    try {
+      final pulse = await _repo.getPulse();
+      state = state.copyWith(relationshipPulse: pulse);
+    } catch (_) {}
   }
 
   Future<void> loadHistory() async {
@@ -118,6 +174,7 @@ class AIChatController extends StateNotifier<AIChatState> {
 
       final reply = (res['reply'] ?? '').toString();
       final photoUrl = res['photoUrl']?.toString();
+      final audioUrl = res['audioUrl']?.toString();
       final msgId = (res['messageId'] ?? 'ai_${DateTime.now().millisecondsSinceEpoch}').toString();
       final createdAt = (res['createdAt'] ?? DateTime.now().toIso8601String()).toString();
 
@@ -126,6 +183,7 @@ class AIChatController extends StateNotifier<AIChatState> {
         'isUser': false,
         'content': reply,
         'photoUrl': (photoUrl != null && photoUrl.isNotEmpty) ? photoUrl : null,
+        'audioUrl': (audioUrl != null && audioUrl.isNotEmpty) ? audioUrl : null,
         'activeMode': state.activeMode,
         'createdAt': createdAt,
       };
@@ -135,6 +193,9 @@ class AIChatController extends StateNotifier<AIChatState> {
         isThinking: false,
         messages: [...state.messages, aiMsg],
       );
+
+      // Refresh pulse after message
+      loadPulse();
     } catch (e) {
       debugPrint('⚠️ AI API failed, activating zero-downtime empathetic simulator: $e');
 

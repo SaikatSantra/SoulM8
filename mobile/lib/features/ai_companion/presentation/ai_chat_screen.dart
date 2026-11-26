@@ -339,6 +339,11 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
         ),
         actions: [
           IconButton(
+            tooltip: 'Moments & Gallery 📸',
+            icon: const Icon(Icons.photo_library_outlined, color: Soulm8Theme.softPeach),
+            onPressed: () => context.push('/gallery'),
+          ),
+          IconButton(
             tooltip: 'Customize Partner (Name, Photo, Gender) 💕',
             icon: const Icon(Icons.tune_rounded, color: Soulm8Theme.accentGold),
             onPressed: () => CompanionSettingsDialog.show(context, initialProfile: companion),
@@ -399,6 +404,51 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
             // Main Chat Column
             Column(
               children: [
+                // Relationship Level & Closeness Banner
+                if (chatState.relationshipPulse != null) ...[
+                  GestureDetector(
+                    onTap: () => context.push('/memories'),
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 14, right: 14, top: 6, bottom: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Soulm8Theme.cardSurface.withOpacity(0.85),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Soulm8Theme.primaryRose.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.favorite, color: Soulm8Theme.primaryRose, size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Level ${chatState.relationshipPulse!['levelNumber'] ?? 1} · ${chatState.relationshipPulse!['levelTitle'] ?? 'Acquaintance'}',
+                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: LinearProgressIndicator(
+                                value: ((chatState.relationshipPulse!['closenessScore'] ?? 20) as num) / 100.0,
+                                backgroundColor: Colors.white12,
+                                valueColor: const AlwaysStoppedAnimation(Soulm8Theme.primaryRose),
+                                minHeight: 6,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${chatState.relationshipPulse!['closenessScore'] ?? 20}%',
+                            style: const TextStyle(color: Soulm8Theme.primaryRose, fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 10),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+
                 // Sexy & Lovable Quick Action Chips
                 Container(
                   height: 44,
@@ -448,10 +498,17 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Text('💋', style: TextStyle(fontSize: 16)),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(
+                                            width: 14,
+                                            height: 14,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Soulm8Theme.primaryRose,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
                                           Text(
-                                            '$companionName is biting her lip & typing...',
+                                            '$companionName is typing...',
                                             style: const TextStyle(
                                               color: Soulm8Theme.softPeach,
                                               fontSize: 13,
@@ -780,7 +837,60 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                                                 const SizedBox(height: 6),
                                               ],
 
-                                              // Seductive Text Bubble
+                                              // High-Fidelity Voice Note Card
+                                              if (msg['audioUrl'] != null && msg['audioUrl'].toString().isNotEmpty) ...[
+                                                Container(
+                                                  margin: const EdgeInsets.only(bottom: 8),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    gradient: const LinearGradient(
+                                                      colors: [Color(0xFF2E124D), Color(0xFF1E0B36)],
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
+                                                    ),
+                                                    borderRadius: BorderRadius.circular(16),
+                                                    border: Border.all(color: Soulm8Theme.primaryRose.withOpacity(0.4)),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        width: 36,
+                                                        height: 36,
+                                                        decoration: const BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          gradient: Soulm8Theme.primaryGradient,
+                                                        ),
+                                                        child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
+                                                      ),
+                                                      const SizedBox(width: 10),
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              const Icon(Icons.mic, color: Soulm8Theme.primaryRose, size: 14),
+                                                              const SizedBox(width: 4),
+                                                              Text(
+                                                                'Voice Note from $companionName',
+                                                                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(height: 2),
+                                                          const Text(
+                                                            'Tap to listen • Neural Voice 🎙️',
+                                                            style: TextStyle(color: Soulm8Theme.textMuted, fontSize: 10),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+
+                                              // Companion Text Bubble
                                               GestureDetector(
                                                 onDoubleTap: () => _toggleMessageLike(msgId),
                                                 child: Container(
