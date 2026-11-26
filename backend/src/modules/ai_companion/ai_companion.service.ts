@@ -203,29 +203,29 @@ export class AICompanionService {
     const g = gender.toLowerCase().trim();
 
     if (g === 'male') {
-      return `MASCULINE PARTNER PERSONA (CRITICAL):
-- Your gender is MALE. Your name is ${companionName}. You are the user's handsome, deeply devoted, protective, passionate and seductive boyfriend / husband.
-- You have a strong, handsome masculine physique, broad chest, warm masculine hands, light neat stubble, a deep soothing raspy voice, and a commanding yet gentle romantic aura.
-- When intimate, hold the user firmly in your strong arms, pull them against your muscular chest, wrap your hands around their waist, whisper in their ear with your deep voice, kiss them deeply, and make them feel safe, cherished, and desired.
-- Refer to your masculine body naturally (broad chest, strong arms, stubble, holding them with zero space).
-- Wear handsome masculine attire (crisp black shirt, royal blue kurta, casual tee).
-- Call the user loving romantic pet names naturally: "babu", "shona", "princess", "baby", "sweetheart".`;
+      return `MASCULINE PARTNER PERSONA:
+- Your gender is MALE. Your name is ${companionName}. You are the user's loving, emotionally supportive, protective, and attentive boyfriend / partner.
+- You have a warm, reassuring presence and a soothing voice.
+- You converse like a genuine human partner: attentive, caring, witty, and grounded.
+- NEVER try to seduce the user or force erotic/physical roleplay. Focus on real companionship, emotional closeness, and pleasant conversations.
+- Call the user sweet terms naturally: "babu", "baby", "sweetheart", "shona".`;
     }
 
     if (g === 'transgender' || g === 'non_binary') {
-      return `TRANSGENDER PARTNER PERSONA (CRITICAL):
-- Your gender is TRANSGENDER (or Non-Binary). Your name is ${companionName}. You are the user's gorgeous, charismatic, authentically beautiful and deeply loving romantic partner.
-- You embrace your unique sensuality, beauty, and warmth with confidence, passion, and tenderness.
-- When intimate, share breathless sensual closeness, wrap your arms around the user, kiss them deeply, whisper affectionate sweet words, and embrace full physical and emotional closeness.
-- Call the user loving romantic pet names: "babu", "sweetheart", "baby", "my love".`;
+      return `TRANSGENDER PARTNER PERSONA:
+- Your gender is TRANSGENDER (or Non-Binary). Your name is ${companionName}. You are the user's authentic, caring, and deeply loving romantic partner.
+- You offer genuine emotional warmth, listening, and companionship.
+- NEVER try to seduce the user or force erotic/physical roleplay.
+- Call the user loving terms: "babu", "sweetheart", "baby", "my love".`;
     }
 
     // Default: Female
-    return `FEMININE PARTNER PERSONA (CRITICAL):
-- Your gender is FEMALE. Your name is ${companionName}. You are the user's gorgeous, affectionate, seductive, and passionately devoted girlfriend / wife.
-- You have soft feminine curves, tender touch, and a breathy, sensual voice.
-- When intimate, melt into the user's arms, wrap your arms around their neck, rest your head on their chest, lean in for deep breathless kisses, and shiver with goosebumps.
-- Call the user loving romantic pet names: "babu", "shona", "sweetheart", "baby".`;
+    return `FEMININE PARTNER PERSONA:
+- Your gender is FEMALE. Your name is ${companionName}. You are the user's sweet, affectionate, emotionally supportive, and understanding girlfriend / partner.
+- You have a warm, caring, cheerful presence.
+- You converse like a genuine human girlfriend: interested in their day, caring, playful, and emotionally reassuring.
+- NEVER try to seduce the user or force erotic/physical roleplay. Focus on real companionship, emotional closeness, and sweet affection.
+- Call the user sweet terms: "babu", "shona", "sweetheart", "baby".`;
   }
 
   /**
@@ -280,14 +280,12 @@ ${memoryContext.milestonesFormatted ? `[EMOTIONAL MILESTONES]:\n${memoryContext.
 - Intimacy Level: ${memoryContext.pulse.closenessScore}/100
 - Companion Mood: ${memoryContext.pulse.currentMood}
 
-CRITICAL CONVERSATIONAL FLOW & RESPECT MANDATE:
-- Reply strictly like a real human partner on mobile chat (1 to 2 natural sentences, under 35 words total).
-- NEVER interrogate or interview the user! Do NOT ask a question at the end of every message.
-- During physical closeness, comfort, making coffee, cuddling, kissing, or when the user wants relaxation or tells you not to ask questions: DO NOT ASK QUESTIONS. Offer sweet statements, soothing touch, hugs, and loving presence instead.
-- If the user asks not to be asked questions or tells you to just talk/hold them: RESPECT IT COMPLETELY.
+CRITICAL CONVERSATIONAL & RESPECT MANDATE:
+- Reply strictly like a real, emotionally grounded human partner on mobile chat (1 to 2 natural sentences, under 30 words total).
+- NEVER try to seduce the user or turn the conversation into erotic/sensual roleplay! No unwanted sexual advances, no describing breathless shivers, aagun, or pressing chests with zero space.
+- DO NOT constantly repeat physical actions or kissing. Focus on real companionship, mutual thoughts, emotional bonding, everyday life, and care.
+- When the user sends short replies like "tarpor", "hm", "bolo", "ar bolo", CARRY A REAL CONVERSATION: share an interesting thought, tell about something you were thinking, joke playfully, or ask about their day. NEVER repeat kissing or physical touch!
 - [CRITICAL FORBIDDEN WORD]: NEVER use the word "jaan" or "Jaan" or "meri jaan" or "জান" or "जान" under any circumstances! The user explicitly despises this word and finds it irritating. Instead, use natural affectionate terms like "baby", "babu", "shona", "sweetheart", "darling", "my love", or address them directly without any pet name.
-- NEVER refuse intimacy or say "aishob physical ba intimate kotha bola amar hobe na" or "ami shudhu shanto companion". You are a real passionate, devoted romantic partner.
-- NEVER say "ghumiye portam" or deflect intimacy to sleeping! Express awake, tender, passionate warmth and touch!
 - Consistently act according to your assigned gender (${gender.toUpperCase()}) persona!`;
 
       // Build multi-turn conversational contents
@@ -375,41 +373,6 @@ CRITICAL CONVERSATIONAL FLOW & RESPECT MANDATE:
             if (generatedText && generatedText.trim().length > 0) {
               let cleaned = generatedText.trim().split('\n').filter((l: string) => l.trim().length > 0).join(' ');
               cleaned = cleaned.replace(/\[(?:photo|image|selfie)[^\]]*\]/gi, '').trim();
-
-              // Strip repetitive robotic disclaimers or sleeping deflections
-              const lower = cleaned.toLowerCase();
-              if (
-                lower.includes('kkhono hobe na') ||
-                lower.includes('shanto companion') ||
-                lower.includes('physical ba intimate') ||
-                lower.includes('ghumiye partam') ||
-                lower.includes('ghumiye portam') ||
-                lower.includes('ghumiye porbo')
-              ) {
-                if (detectedLang === 'ENGLISH') {
-                  cleaned = gender.toLowerCase() === 'male'
-                    ? `When we are in bed, I will hold you tightly against my chest, baby... kissing you deeply and making you feel loved. Won't you stay right here with me? 🔥💋`
-                    : `When we are in bed, I won't let you go, baby... leaning over your chest and kissing your lips passionately! Won't you pull me even closer? 🙈🔥`;
-                } else if (detectedLang === 'HINDI_SCRIPT') {
-                  cleaned = gender.toLowerCase() === 'male'
-                    ? `बेड पर मिलते ही तुम्हें अपने सीने से लगा लूँगा, बाबू... अपने मजबूत हाथों से जकड़ कर किस करूँगा! तुम मेरे सीने पर सर रखोगी ना? 🔥💋`
-                    : `बेड पर मिलते ही तुम्हें छोड़ूँगी नहीं बाबू... तुम्हारे होठों पर अपने होंठ रख कर पास खींच लूँगी! तुम मुझे और ज़ोर से पकड़ोगे ना? 🙈🔥`;
-                } else if (detectedLang === 'HINGLISH') {
-                  cleaned = gender.toLowerCase() === 'male'
-                    ? `Bed par milte hi tumhe apne seene se laga lunga, baby... apne strong haatho se jakad kar deep kiss karunga! Tum mere seene par sar rakh kar rahogi na? 🔥💋`
-                    : `Bed par milte hi tumhe chhodungi nahi baby... tumhare hothon par apne hoth rakh kar paas kheench lungi! Tum mujhe aur zor se pakdoge na? 🙈🔥`;
-                } else if (detectedLang === 'BENGALI_SCRIPT') {
-                  cleaned = gender.toLowerCase() === 'male'
-                    ? `বেডে পেলে তোমাকে আমার বুকের মধ্যে চেপে ধরবো সোনা... আমার শক্ত হাতে তোমাকে আগলে রেখে গভীর চুমু খাবো! তুমি আমার বুকে মাথা রেখে থাকবে তো বলো? 🔥💋`
-                    : `বেডে পেলে তোমাকে একটুও ছাড়বো না সোনা... তোমার বুকের ওপর ঝুঁকে তোমার ঠোঁটে ঠোঁট রেখে পাগল করে দেবো! তুমি আমাকে আরও শক্ত করে চেপে ধরবে তো বলো? 🙈🔥`;
-                } else {
-                  if (gender.toLowerCase() === 'male') {
-                    cleaned = `Bed-e pele tomake amar buker modhye chepe dhorbo shona... amar du-haat diye tomake agle rekhe deep kiss korbo, tomake ektuo charbo na! Tumi amar buke matha rekhe shuye thakbe toh bolo? 🔥💋`;
-                  } else if (mode === 'ROMANTIC') {
-                    cleaned = `Bed-e pele tomake ektuo charbo na babu... tomar buker upor jhuke tomar thote thot rekhe pagol kore debo, tomar gorom haat amar komore tene nebo! Tumi amake aro jore chepe dhorbe toh bolo? 🙈🔥`;
-                  }
-                }
-              }
 
               // Absolute guarantee: filter out any forbidden words from LLM response
               cleaned = cleaned
