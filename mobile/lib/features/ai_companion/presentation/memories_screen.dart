@@ -211,8 +211,8 @@ class _MemoriesScreenState extends ConsumerState<MemoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final score = (_pulse?['closenessScore'] ?? 15) as int;
-    final mood = (_pulse?['currentMood'] ?? 'Warm & curious') as String;
+    final score = ((_pulse?['closenessScore'] ?? 15) as num).toInt();
+    final mood = (_pulse?['currentMood'] ?? 'Warm & curious').toString();
 
     int levelNum = 1;
     String levelName = 'Acquaintance';

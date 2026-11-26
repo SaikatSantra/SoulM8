@@ -17,6 +17,7 @@ class Soulm8Theme {
   static const Color successGreen = Color(0xFF00E676);
   static const Color accentGold = Color(0xFFFFD166);
   static const Color backgroundDark = Color(0xFF0F0817);
+  static const Color darkBackground = Color(0xFF0F0817);
 
   // Dynamic Companion Accent Colors
   static const Color romanticColor = Color(0xFFFF2A6D);
