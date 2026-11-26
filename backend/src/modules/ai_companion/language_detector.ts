@@ -35,8 +35,8 @@ export class LanguageDetector {
       'chumu', 'chumo', 'buk', 'buke', 'buker', 'hate', 'hater', 'kno', 'keno', 'kache',
       'shorir', 'nishwash', 'nishwas', 'joriye', 'dhoro', 'chepe', 'porecho', 'dekhte',
       'chai', 'jani', 'khub', 'shundor', 'shari', 'saree', 'mishti', 'hote', 'parbe',
-      'ekla', 'mon', 'mone', 'bichhana', 'ghumiye', 'pathao', 'pathalam', 'dao', 'r',
-      'kichu', 'bolte', 'ichhe', 'ichha', 'thakbe', 'charbo', 'pagol'
+      'ekla', 'mon', 'mone', 'bichhana', 'ghumiye', 'pathao', 'pathalam', 'dao', 'r', 'ar', 'aar',
+      'kichu', 'bolte', 'ichhe', 'ichha', 'thakbe', 'charbo', 'pagol', 'tarpor', 'tapor', 'ki'
     ]);
 
     // 4. Hinglish (Romanized Hindi) markers
