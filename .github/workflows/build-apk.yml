@@ -64,9 +64,9 @@ jobs:
       - name: Publish Direct Public Download Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.1
-          name: "Soulm8 Android Release v1.0.1"
-          body: "Official signed Soulm8 Android APK install file. Direct download for Android phones."
+          tag_name: v1.0.2
+          name: "Soulm8 Android Release v1.0.2"
+          body: "Official signed Soulm8 Android APK install file (v1.0.2). Natural conversation flow, language mirroring, zero repetitive question loops."
           files: mobile/build/app/outputs/flutter-apk/app-release.apk
           make_latest: true
         env:
