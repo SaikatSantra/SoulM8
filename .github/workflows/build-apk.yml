@@ -39,6 +39,11 @@ jobs:
               -alias soulm8 -keyalg RSA -keysize 2048 -validity 10000 \
               -storepass soulm8password -keypass soulm8password \
               -dname "CN=Soulm8, OU=Mobile, O=Soulm8, L=Kolkata, ST=WB, C=IN"
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add mobile/android/app/upload-keystore.jks
+            git commit -m "chore: persist Java release keystore [skip ci]" || true
+            git push origin main || true
           fi
 
       - name: Build Android Release APK
@@ -64,6 +69,5 @@ jobs:
           body: "Official signed Soulm8 Android APK install file. Direct download for Android phones."
           files: mobile/build/app/outputs/flutter-apk/app-release.apk
           make_latest: true
-          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
